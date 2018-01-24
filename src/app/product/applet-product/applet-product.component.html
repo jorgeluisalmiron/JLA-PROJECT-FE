@@ -1,0 +1,279 @@
+<app-messages></app-messages>
+
+<main *ngIf="toogle=='list'">
+    <div class="container">
+        <h1 class="text-center">Productos</h1>
+        <hr>
+        <!--New-->
+        <button type="button" (click)="create()" class="btn btn-primary"
+          title="Nuevo">
+          <span class="glyphicon glyphicon-plus"></span>
+        </button>
+        <!--List All-->
+        <button type="button" (click)="listAll()" class="btn btn-primary"
+          title="Listar Todo">
+          <span class="glyphicon glyphicon-list"></span>
+        </button>
+        <!--Edit-->
+        <button type="button" [disabled]="selectedRow==null"
+          (click)="edit()" title="Editar"
+          class="btn btn-primary">
+          <span class="glyphicon glyphicon-edit"></span>
+        </button>
+        <!--Delete-->
+        <button type="button" [disabled]="selectedRow==null"
+          (click)="deleteDialogOpen()" class="btn btn-primary" title="Eliminar"
+          class="btn btn-primary">
+          <span class="glyphicon glyphicon-trash"></span>
+        </button>
+      
+        <button type="button" (click)="searchDialogOpen()"
+          class="btn btn-primary" title="Buscar" class="btn btn-primary">
+          <span class="glyphicon glyphicon-search"></span>
+        </button>
+        <hr>
+      </div>
+      
+      
+      
+      <div class="container">
+        <div class="row">
+          <table class="table table-striped table-hover">
+            <thead>
+              <tr>
+                <th><a (click)="sortTable('code')">Codigo <span
+                    *ngIf="searchOptions.sortByField != 'code'"
+                    class="glyphicon glyphicon-sort"></span> <span
+                    *ngIf="searchOptions.sortByField == 'code' && searchOptions.sortType =='ASC'"
+                    class="glyphicon glyphicon-sort-by-attributes"></span> <span
+                    *ngIf="searchOptions.sortByField == 'code' && searchOptions.sortType =='DESC'"
+                    class="glyphicon glyphicon-sort-by-attributes-alt"></span>
+                </a></th>
+                <th><a (click)="sortTable('name')">Nombre <span
+                    *ngIf="searchOptions.sortByField != 'name'"
+                    class="glyphicon glyphicon-sort"></span> <span
+                    *ngIf="searchOptions.sortByField == 'name' && searchOptions.sortType =='ASC'"
+                    class="glyphicon glyphicon-sort-by-attributes"></span> <span
+                    *ngIf="searchOptions.sortByField == 'name' && searchOptions.sortType =='DESC'"
+                    class="glyphicon glyphicon-sort-by-attributes-alt"></span>
+                </a></th>
+                <th><a (click)="sortTable('mark')">Marca <span
+                    *ngIf="searchOptions.sortByField != 'mark'"
+                    class="glyphicon glyphicon-sort"></span> <span
+                    *ngIf="searchOptions.sortByField == 'mark' && searchOptions.sortType =='ASC'"
+                    class="glyphicon glyphicon-sort-by-attributes"></span> <span
+                    *ngIf="searchOptions.sortByField == 'mark' && searchOptions.sortType =='DESC'"
+                    class="glyphicon glyphicon-sort-by-attributes-alt"></span>
+                </a></th>
+                <th><a (click)="sortTable('mainSupplier')">Proveedor
+                    principal <span
+                    *ngIf="searchOptions.sortByField != 'mainSupplier'"
+                    class="glyphicon glyphicon-sort"></span> <span
+                    *ngIf="searchOptions.sortByField == 'mainSupplier' && searchOptions.sortType =='ASC'"
+                    class="glyphicon glyphicon-sort-by-attributes"></span> <span
+                    *ngIf="searchOptions.sortByField == 'mainSupplier' && searchOptions.sortType =='DESC'"
+                    class="glyphicon glyphicon-sort-by-attributes-alt"></span>
+                </a></th>
+                <th><a (click)="sortTable('uom')">Unidad de medida <span
+                    *ngIf="searchOptions.sortByField != 'uom'"
+                    class="glyphicon glyphicon-sort"></span> <span
+                    *ngIf="searchOptions.sortByField == 'uom' && searchOptions.sortType =='ASC'"
+                    class="glyphicon glyphicon-sort-by-attributes"></span> <span
+                    *ngIf="searchOptions.sortByField == 'uom' && searchOptions.sortType =='DESC'"
+                    class="glyphicon glyphicon-sort-by-attributes-alt"></span>
+                </a></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of listOfElements; let idx=index"
+                (click)="setIndex(idx)" (dblclick)="openForm()"
+                [ngClass]="{'selected':idx == selectedRow}">
+                <td class="text-left">{{item.code}}</td>
+                <td class="text-left">{{item.name}}</td>
+                <td class="text-left">{{item.mark}}</td>
+                <td class="text-left">{{item.main_supplier}}</td>
+                <td class="text-left">{{item.uom}}</td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr>
+                <td colspan="9">
+                  <div class="text-right">
+                    <ul class="pagination">
+                      <li><select id="pageSize" name="pageSize"
+                        (change)="onChangePageSize($event.target.value)">
+                          <option selected value="10">10</option>
+                          <option value="20">20</option>
+                          <option value="30">30</option>
+                      </select></li>
+                      <li>
+      
+                        <button class="btn btn-primary"
+                          [disabled]="searchOptions.first==true" (click)="firstPage()">
+                          <span class="glyphicon glyphicon-backward"></span>
+                        </button>
+                      </li>
+      
+                      <li>
+      
+                        <button class="btn btn-primary"
+                          [disabled]="searchOptions.first==true" (click)="prevPage()">
+                          <span class="glyphicon glyphicon-chevron-left"></span>
+                        </button>
+                      </li>
+      
+                      <li>
+                        <button class="btn btn-primary"
+                          [disabled]="searchOptions.last==true" (click)="nextPage()">
+                          <span class="glyphicon glyphicon-chevron-right"></span>
+                        </button>
+                      </li>
+                      <li>
+                        <button class="btn btn-primary"
+                          [disabled]="searchOptions.last==true" (click)="lastPage()">
+                          <span class="glyphicon glyphicon-forward"></span>
+                        </button>
+                      </li>
+                    </ul>
+                  </div>
+                </td>
+              </tr>
+          </table>
+        </div>
+      </div>
+    
+</main>
+<section *ngIf="toogle=='form'">
+    <form #form="ngForm" name="form">
+        <div class="container">
+        
+          <h1 class="text-center">Productos</h1>
+          <hr>
+          <!--Save-->
+          <button type="button" title="Guardar" [disabled]="!form.valid || form.pristine" (click)="save()" class="btn btn-primary">
+            <span class="glyphicon glyphicon-floppy-disk"></span>
+          </button>
+          <!--Save-->
+          <button type="button" title="Cancelar" (click)="cancel()" class="btn btn-primary">
+            <span class="glyphicon glyphicon-remove-circle"></span>
+          </button>
+        
+          <span style="color: red" *ngIf="!form.valid">Faltan cargar campos requeridos</span>
+        
+          <hr>
+        
+        </div>
+        <div class="container">
+          <h2 id="forms-horizontal"></h2>
+          <div class="form-group col-xs-10 col-sm-4 col-md-3 col-lg-3">
+            <label for="code">Codigo</label>
+            <span class="error" style="color: red">*</span>
+            <input type="text" class="form-control" id="code" name="code" placeholder="Codigo" [(ngModel)]="element.code" required>
+          </div>
+          <div class="form-group col-xs-10 col-sm-4 col-md-3 col-lg-3">
+            <label for="firstname">Nombre</label>
+            <span class="error" style="color: red">*</span>
+            <input type="text" class="form-control" id="name" name="name" placeholder="Nombre" [(ngModel)]="element.name"
+             required>
+          </div>
+          <div class="form-group col-xs-10 col-sm-4 col-md-3 col-lg-3">
+            <label for="uom">Unidad de Medida</label>
+            <span class="error" style="color: red">*</span>
+            <select class="form-control" id="uom" name="uom" [(ngModel)]="element.uom" required>
+              <option value="" disabled selected>Seleccione tipo de documento
+              </option>
+              <option value="Unidad" selected>Unidad</option>
+              <option value="Kilogramo">Kilogramo</option>
+              <option value="Metros">Metros</option>
+              <option value="Litros">Litros</option>
+            </select>
+          </div>
+          <div class="form-group col-xs-10 col-sm-4 col-md-3 col-lg-3">
+            <label for="main_supplier">Proveedor Principal</label>
+            <input type="text" class="form-control" id="main_supplier" name="main_supplier" placeholder="Proveedor Principal" [(ngModel)]="element.main_supplier">
+          </div>
+          <div class="form-group col-xs-10 col-sm-4 col-md-3 col-lg-3">
+            <label for="mark">Marca</label>
+            <input type="text" class="form-control" id="mark" name="mark" [(ngModel)]="element.mark" placeholder="Marca">
+          </div>
+        </div>
+        </form>
+</section>
+
+
+<div *ngIf="toogle=='deleteDialog'">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" (click)="closeDialog()">&times;</button>
+				<h4 class="modal-title">Confirmar</h4>
+			</div>
+			<div class="modal-body">
+
+				<p>¿Desea eliminar el registro?</p>
+
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default"
+					(click)="closeDialog()">Cancelar</button>
+				<button type="button" class="btn  btn-danger" (click)="delete()">Eliminar</button>
+
+			</div>
+
+		</div>
+	</div>
+</div>
+
+
+
+<div *ngIf="toogle=='searchDialog'">
+	<form #searchDialog="ngForm" name="searchFormModal">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" (click)="closeDialog()" class="close">&times;</button>
+					<h4 class="modal-title">Buscar</h4>
+				</div>
+				<div class="modal-body">
+					<div class="container-fluid">
+						<div class="row">
+
+							<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+								<label for="key">Campo</label> <select class="form-control"
+									[(ngModel)]="searchCriteria.key" name="key" id="key" required>
+									<option value="code" selected>Código</option>
+									<option value="name">Nombre</option>
+									<option value="mark">Marca</option>
+								</select>
+							</div>
+
+							<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+								<label for="search_comparator">Comparador</label> <select
+									class="form-control" id="operation" name="operation"
+									id="operation" [(ngModel)]="searchCriteria.operation" required>
+									<option value="=" selected>Igual a</option>
+									<option value=">=">Mayor o igual a</option>
+									<option value="<=">Menor o igual a</option>
+									<option value=">">Mayor a</option>
+									<option value="<">Menor a</option>
+									<option value=":">Contiene</option>
+								</select>
+							</div>
+							<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+								<label for="search_by_value">Valor</label> <input type="text"
+									class="form-control" [(ngModel)]="searchCriteria.value"
+									placeholder="Ingrese valor" name="value" id="value" required />
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default"
+						(click)="closeDialog()">Cancelar</button>
+					<button type="button" class="btn  btn-primary"
+						[disabled]="!searchDialog.valid" (click)="search()">Buscar</button>
+				</div>
+			</div>
+		</div>
+	</form>
+</div>
